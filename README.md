@@ -47,3 +47,4 @@ I tried to save all necessary data so that when you load the game would continue
 
 - Minions would respawn at different positions each time you load the same save file. It's not big of an issue, and there is nothing I can do about it.
 - I've not tested this mod much with achievements unlocking, but for most, if not all cases, it should be working as intended. 
+- `Load` Button is disabled when the player dies and returns to the lobby.
