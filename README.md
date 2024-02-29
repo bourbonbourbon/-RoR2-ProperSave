@@ -14,7 +14,7 @@ Only 1 save file for each profile for a singleplayer. If you die, the save will 
 
 I tried to save all necessary data so that when you load the game would continue as it should have been without saving.
 
-- `Load` Button is disabled when the player dies and returns to the lobby.
+- `Load` Button is disabled when the player dies and returns to the lobby. Simply return to the lobby, select the game mode and click on the load button.
 - Minions would respawn at different positions each time you load the same save file. It's not big of an issue, and there is nothing I can do about it.
 - I've not tested this mod much with achievements unlocking, but for most, if not all cases, it should be working as intended.
 
