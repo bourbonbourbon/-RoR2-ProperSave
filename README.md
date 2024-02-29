@@ -15,6 +15,12 @@ Each game mode (`Classic`, `Eclipse`, `Simulacrum`) has it's own save files, so 
 * `CloudStorageSubDirectory` - Sub directory name for cloud storage. Changing it allows to use different save files for different mod profiles.
 * `SavesDirectory` - Directory where save files will be stored. "ProperSave" directory will be created in the directory you have specified. If the directory doesn't exist the default one will be used.
 
+# Import directly into R2ModMan
+1. Save the zip file from the `Releases` section.
+2. In R2ModMan, click on `Settings` on the left side.
+3. Search for `Import local mod` in the search bar and select it.
+4. Click `Select file` and open the saved zip file.
+
 # For mod developers
 #### Saving
 To save data you need to subscribe to `ProperSave.SaveFile.OnGatherSaveData`. It will be called every time the game is saved (this happens on `RoR2.Stage.onStageStartGlobal`) to gather info from mods that needs to be saved. You can add any value with any key, but remember that other mods can do the same thing, so keep keys unique (maybe add a mod name in front or something). 
