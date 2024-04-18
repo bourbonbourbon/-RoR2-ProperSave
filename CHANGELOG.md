@@ -1,3 +1,6 @@
+**2.9.1**
+* Updated French translation, thanks `NorthBlue333`.
+
 **2.9.0**
 * Added config option to enable Steam/Epic games cloud storage support, allowing you to synchronize saves between devices.
 * Added config option to change saves directory.
