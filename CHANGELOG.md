@@ -1,3 +1,7 @@
+**2.10.0**
+* Fixes for `Devotion` update.
+* Added support for `Devotion` artifact
+
 **2.9.1**
 * Updated French translation, thanks `NorthBlue333`.
 

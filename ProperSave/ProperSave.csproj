@@ -11,7 +11,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="BepInEx.Core" Version="5.4.19" />
-    <PackageReference Include="RiskOfRain2.GameLibs" Version="*-*" />
     <PackageReference Include="UnityEngine.Modules" Version="2019.4.26" />
   </ItemGroup>
 
@@ -34,6 +33,35 @@
     </Reference>
     <Reference Include="Zio">
       <HintPath>..\Libs\Zio.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="RoR2">
+      <HintPath>..\Libs\RoR2-nstrip.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RiskOfRain2.GameLibs" Version="*-*" ExcludeAssets="All" GeneratePathProperty="true" />
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\com.unity.multiplayer-hlapi.Runtime.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\HGCSharpUtils.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\Rewired_Core.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\Unity.TextMeshPro.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\UnityEngine.UI.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\Unity.Addressables.dll">
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="$(PkgRiskOfRain2_GameLibs)\lib\netstandard2.0\Unity.ResourceManager.dll">
       <Private>false</Private>
     </Reference>
   </ItemGroup>

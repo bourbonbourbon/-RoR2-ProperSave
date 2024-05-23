@@ -3,6 +3,9 @@ using RoR2;
 using RoR2.Stats;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.Networking;
 
 namespace ProperSave.SaveData
 {
@@ -41,6 +44,9 @@ namespace ProperSave.SaveData
 
         [DataMember(Name = "cvrng")]
         public RngData cloverVoidRng;
+
+        [DataMember(Name = "di")]
+        public InventoryData devotionInventory;
 
         internal PlayerData(PlayerCharacterMasterController player, LostNetworkUser lostNetworkUser = null) {
             var master = player.master;
@@ -98,11 +104,28 @@ namespace ProperSave.SaveData
             {
                 cloverVoidRng = new RngData(master.cloverVoidRng);
             }
+
+            if (RunArtifactManager.instance.IsArtifactEnabled(CU8Content.Artifacts.Devotion))
+            {
+                var devotionInventoryController = GetDevotionInventoryController(master);
+                if (devotionInventoryController)
+                {
+                    devotionInventory = new InventoryData(devotionInventoryController._devotionMinionInventory);
+                }
+            }
         }
 
-        internal void LoadPlayer(NetworkUser player) {
+        internal void LoadPlayer(NetworkUser player)
+        {
             var master = player.master;
-            foreach(var minion in minions)
+
+            if (devotionInventory != null)
+            {
+                var devotionInventoryController = CreateDevotionInventoryController(master);
+                devotionInventory.LoadInventory(devotionInventoryController._devotionMinionInventory);
+            }
+
+            foreach (var minion in minions)
             {
                 minion.LoadMinion(master);
             }
@@ -134,6 +157,33 @@ namespace ProperSave.SaveData
             }
 
             cloverVoidRng?.LoadDataOut(out master.cloverVoidRng);
+        }
+
+        internal static DevotionInventoryController GetDevotionInventoryController(CharacterMaster master)
+        {
+            foreach (var controller in DevotionInventoryController.InstanceList)
+            {
+                if (controller.SummonerMaster == master)
+                {
+                    return controller;
+                }
+            }
+
+            return null;
+        }
+
+        private static DevotionInventoryController CreateDevotionInventoryController(CharacterMaster master)
+        {
+            var prefab = Addressables.LoadAssetAsync<GameObject>("RoR2/CU8/LemurianEgg/DevotionMinionInventory.prefab").WaitForCompletion();
+            var gameObject = GameObject.Instantiate(prefab);
+
+            var inventoryController = gameObject.GetComponent<DevotionInventoryController>();
+            inventoryController.GetComponent<TeamFilter>().teamIndex = TeamIndex.Player;
+            inventoryController._summonerMaster = master;
+
+            NetworkServer.Spawn(gameObject);
+
+            return inventoryController;
         }
     }
 }
