@@ -25,10 +25,10 @@ namespace ProperSave
         public const string GUID = "com.bourbonbourbon.ProperSave";
         public const string Name = "Proper Save";
 <<<<<<< HEAD
-        public const string Version = "2.10.0";
-=======
         public const string Version = "2.9.1";
->>>>>>> 1290ee5 (removed deleting save file on death)
+=======
+        public const string Version = "2.10.0";
+>>>>>>> KingEnderBrine-develop
 
         private static readonly char[] invalidSubDirectoryCharacters = new[] { '\\', '/', '.' };
 
