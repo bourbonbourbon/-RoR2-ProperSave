@@ -20,7 +20,13 @@ jobs:
       run: dotnet build . --configuration Release /p:PackageOutputPath=../ReleaseOutput /p:OutputPath=../ReleaseOutput
 
     - name: Install TCLI
-      run: dotnet tool install --global tcli --version 0.1.4
+      run: dotnet tool install --global tcli
 
-    - name: Publish to thunderstore.io
-      run: tcli publish --token ${{ secrets.TCLI_AUTH_TOKEN }} --config-path ./thunderstore.toml
+    - name: Build the mod zip file
+      run: tcli build --config-path ./thunderstore.toml
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: build/*.zip
+        file_glob: true

@@ -4,6 +4,7 @@
 
 **2.9.1**
 * Updated French translation, thanks `NorthBlue333`.
+* Mod does not delete save files when dead.
 
 **2.9.0**
 * Added config option to enable Steam/Epic games cloud storage support, allowing you to synchronize saves between devices.

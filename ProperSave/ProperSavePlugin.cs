@@ -22,7 +22,7 @@ namespace ProperSave
     [BepInPlugin(GUID, Name, Version)]
     public class ProperSavePlugin : BaseUnityPlugin
     {
-        public const string GUID = "com.KingEnderBrine.ProperSave";
+        public const string GUID = "com.bourbonbourbon.ProperSave";
         public const string Name = "Proper Save";
         public const string Version = "2.10.0";
 
