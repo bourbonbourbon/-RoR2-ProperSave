@@ -12,13 +12,22 @@ namespace ProperSave.SaveData
     {
         [DataMember(Name = "mi")]
         public int masterIndex;
+        [DataMember(Name = "bn")]
+        public string bodyName;
         [DataMember(Name = "i")]
         public InventoryData inventory;
+        [DataMember(Name = "dld")]
+        public DevotedLemurianData devotedLemurianData;
 
         internal MinionData(CharacterMaster master)
         {
             masterIndex = (int)master.masterIndex;
+            bodyName = master.bodyPrefab.name;
             inventory = new InventoryData(master.inventory);
+            if (master.TryGetComponent<DevotedLemurianController>(out var devotedLemurianController))
+            {
+                devotedLemurianData = new DevotedLemurianData(devotedLemurianController);
+            }
         }
 
         //Loads minion after scene was populated 
@@ -36,6 +45,7 @@ namespace ProperSave.SaveData
                 var minionGameObject = Object.Instantiate(masterPrefab);
                 CharacterMaster minionMaster = minionGameObject.GetComponent<CharacterMaster>();
                 minionMaster.teamIndex = TeamIndex.Player;
+                minionMaster.bodyPrefab = BodyCatalog.FindBodyPrefab(bodyName ?? "") ?? minionMaster.bodyPrefab;
 
                 //MinionOwnership
                 var newOwnerMaster = playerMaster;
@@ -47,8 +57,16 @@ namespace ProperSave.SaveData
                 var aiOwnership = minionGameObject.GetComponent<AIOwnership>();
                 aiOwnership.ownerMaster = playerMaster;
 
-                BaseAI baseAI = minionGameObject.GetComponent<BaseAI>();
+                var baseAI = minionGameObject.GetComponent<BaseAI>();
                 baseAI.leader.gameObject = playerMaster.gameObject;
+
+                if (devotedLemurianData != null)
+                {
+                    var devotedLemurianController = minionMaster.GetComponent<DevotedLemurianController>();
+                    devotedLemurianData.LoadData(devotedLemurianController);
+                    devotedLemurianController._lemurianMaster = minionMaster;
+                    devotedLemurianController._devotionInventoryController = PlayerData.GetDevotionInventoryController(playerMaster);
+                }
 
                 NetworkServer.Spawn(minionGameObject);
 
