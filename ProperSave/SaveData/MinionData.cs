@@ -12,18 +12,17 @@ namespace ProperSave.SaveData
     {
         [DataMember(Name = "mi")]
         public int masterIndex;
-        [DataMember(Name = "bn")]
-        public string bodyName;
-        [DataMember(Name = "i")]
-        public InventoryData inventory;
+
+        [DataMember(Name = "m")]
+        public CharacterMasterData master;
+
         [DataMember(Name = "dld")]
         public DevotedLemurianData devotedLemurianData;
 
         internal MinionData(CharacterMaster master)
         {
             masterIndex = (int)master.masterIndex;
-            bodyName = master.bodyPrefab.name;
-            inventory = new InventoryData(master.inventory);
+            this.master = new CharacterMasterData(master);
             if (master.TryGetComponent<DevotedLemurianController>(out var devotedLemurianController))
             {
                 devotedLemurianData = new DevotedLemurianData(devotedLemurianController);
@@ -45,7 +44,7 @@ namespace ProperSave.SaveData
                 var minionGameObject = Object.Instantiate(masterPrefab);
                 CharacterMaster minionMaster = minionGameObject.GetComponent<CharacterMaster>();
                 minionMaster.teamIndex = TeamIndex.Player;
-                minionMaster.bodyPrefab = BodyCatalog.FindBodyPrefab(bodyName ?? "") ?? minionMaster.bodyPrefab;
+                master.LoadMaster(minionMaster, true);
 
                 //MinionOwnership
                 var newOwnerMaster = playerMaster;
@@ -65,21 +64,11 @@ namespace ProperSave.SaveData
                     var devotedLemurianController = minionMaster.GetComponent<DevotedLemurianController>();
                     devotedLemurianData.LoadData(devotedLemurianController);
                     devotedLemurianController._lemurianMaster = minionMaster;
-                    devotedLemurianController._devotionInventoryController = PlayerData.GetDevotionInventoryController(playerMaster);
+                    devotedLemurianController._devotionInventoryController = CharacterMasterData.GetDevotionInventoryController(playerMaster);
                 }
 
                 NetworkServer.Spawn(minionGameObject);
-
-                minionMaster.StartCoroutine(LoadInventoryCoroutine(minionMaster, inventory));
             }
-        }
-
-        private static IEnumerator LoadInventoryCoroutine(CharacterMaster minionMaster, InventoryData inventory)
-        {
-            //Waiting 2 frames for game to give items in some components Start to override them
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            inventory.LoadInventory(minionMaster.inventory);
         }
     }
 }

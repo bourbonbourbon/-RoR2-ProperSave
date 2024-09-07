@@ -108,11 +108,15 @@ namespace ProperSave
                 rectTransformComponent.anchorMax = new Vector2(1, 2);
 
                 lobbyGlyphAndDescription = lobbySubmenuLegend.transform.GetChild(0).gameObject;
+                lobbyGlyphAndDescription.SetActive(true);
 
                 var glyph = lobbyGlyphAndDescription.transform.GetChild(0).GetComponent<InputBindingDisplayController>();
-                glyph.actionName = "UISubmenuUp";
+                glyph.actionName = "UISubmitTertiary";
 
-                var description = lobbyGlyphAndDescription.transform.GetChild(1).GetComponent<LanguageTextMeshController>();
+                var glyph2 = lobbyGlyphAndDescription.transform.GetChild(1);
+                var description = lobbyGlyphAndDescription.transform.GetChild(2).GetComponent<LanguageTextMeshController>();
+                GameObject.Destroy(glyph2.gameObject);
+
                 description.token = LanguageConsts.PROPER_SAVE_TITLE_LOAD;
 
                 for (var i = 1; i < lobbySubmenuLegend.transform.childCount; i++)
@@ -121,10 +125,8 @@ namespace ProperSave
                 }
                 #endregion
 
-                UpdateLobbyControls();
-
                 var gamepadInputEvent = self.gameObject.AddComponent<HoldGamepadInputEvent>();
-                gamepadInputEvent.actionName = "UISubmenuUp";
+                gamepadInputEvent.actionName = "UISubmitTertiary";
                 gamepadInputEvent.enabledObjectsIfActive = Array.Empty<GameObject>();
 
                 gamepadInputEvent.actionEvent = new UnityEngine.Events.UnityEvent();
@@ -132,6 +134,8 @@ namespace ProperSave
 
                 gamepadTooltipProvider = glyph.gameObject.AddComponent<GamepadTooltipProvider>();
                 gamepadTooltipProvider.inputEvent = gamepadInputEvent;
+
+                UpdateLobbyControls();
             }
             catch (Exception e)
             {
@@ -231,7 +235,7 @@ namespace ProperSave
             foreach (var playerData in save.PlayersData)
             {
                 var networkUser = NetworkUser.readOnlyInstancesList.FirstOrDefault(user => playerData.userId.Load().Equals(user.id));
-                var body = BodyCatalog.FindBodyPrefab(playerData.characterBodyName);
+                var body = BodyCatalog.FindBodyPrefab(playerData.master.bodyName);
                 var survivor = SurvivorCatalog.FindSurvivorDefFromBody(body);
                 builder.Append(Language.GetStringFormatted(LanguageConsts.PROPER_SAVE_TOOLTIP_LOAD_DESCRIPTION_CHARACTER, networkUser?.userName, survivor != null ? Language.GetString(survivor.displayNameToken) : ""));
             }
