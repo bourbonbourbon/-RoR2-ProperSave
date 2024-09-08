@@ -19,6 +19,8 @@ namespace ProperSave.SaveData
         public int difficulty;
         [DataMember(Name = "ft")]
         public float fixedTime;
+        [DataMember(Name = "t")]
+        public float time;
         [DataMember(Name = "ip")]
         public bool isPaused;
         [DataMember(Name = "offt")]
@@ -62,6 +64,7 @@ namespace ProperSave.SaveData
             isPaused = stopWatch.isPaused;
             offsetFromFixedTime = stopWatch.offsetFromFixedTime;
             fixedTime = run.fixedTime;
+            time = run.time;
 
             stageClearCount = run.stageClearCount;
             sceneName = SceneManager.GetActiveScene().name;
@@ -115,14 +118,7 @@ namespace ProperSave.SaveData
 
             instance.seed = seed;
             instance.selectedDifficulty = (DifficultyIndex)difficulty;
-            instance.fixedTime = fixedTime;
             instance.shopPortalCount = shopPortalCount;
-
-            instance.runStopwatch = new Run.RunStopwatch
-            {
-                offsetFromFixedTime = offsetFromFixedTime,
-                isPaused = isPaused
-            };
 
             runRng.LoadData(instance);
             instance.GenerateStageRNG();
@@ -155,6 +151,8 @@ namespace ProperSave.SaveData
                 instance.SetEventFlag(flag);
             }
 
+            instance.isRunning = true;
+
             if (onRunStartGlobalDelegate.GetValue(null) is MulticastDelegate onRunStartGlobal && onRunStartGlobal != null)
             {
                 foreach (var handler in onRunStartGlobal.GetInvocationList())
@@ -162,6 +160,15 @@ namespace ProperSave.SaveData
                     handler.Method.Invoke(handler.Target, new object[] { instance });
                 }
             }
+
+            instance.fixedTime = fixedTime;
+            instance.time = time;
+            instance.runStopwatch = new Run.RunStopwatch
+            {
+                offsetFromFixedTime = offsetFromFixedTime,
+                isPaused = isPaused
+            };
+
         }
     }
 }
