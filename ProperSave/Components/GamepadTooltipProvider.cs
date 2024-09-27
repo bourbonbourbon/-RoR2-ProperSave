@@ -1,4 +1,5 @@
-﻿using RoR2.UI;
+﻿using RoR2;
+using RoR2.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,17 +9,17 @@ namespace ProperSave.Components
     {
         public HoldGamepadInputEvent inputEvent;
         private RectTransform rectTransform;
-
-        public bool offsetWidth;
-        public bool offsetHeight;
+        private InputBindingDisplayController inputBindingDisplayController;
 
         public void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
+            inputBindingDisplayController = GetComponent<InputBindingDisplayController>();
         }
 
         public void Start()
         {
+            inputBindingDisplayController.useExplicitInputSource = false;
             inputEvent.holdStartEvent.AddListener(HoldStart);
             inputEvent.holdEndEvent.AddListener(HoldEnd);
         }
@@ -31,7 +32,7 @@ namespace ProperSave.Components
                 return;
             }
 
-            TooltipController.SetTooltip(current, this, new Vector2(int.MaxValue, 0));
+            TooltipController.SetTooltip(current, this, new Vector2(int.MaxValue, 0), rectTransform);
             if (current.currentTooltip && current.currentTooltipProvider == this)
             {
                 current.currentTooltip.owner = null;

@@ -1,3 +1,10 @@
+**2.11.1**
+* Fixed an issue where Equipment cooldown would be run time + leftover cooldown time.
+
+**2.11.0**
+* Fixes for `Seekers of the Storm` update.
+* Fixed an issue where save files wouldn't be deleted on gameover when using cloud store unless you restarted the game after save was made.
+
 **2.10.0**
 * Fixes for `Devotion` update.
 * Added support for `Devotion` artifact

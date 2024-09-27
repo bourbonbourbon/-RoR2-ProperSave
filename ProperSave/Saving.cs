@@ -56,7 +56,10 @@ namespace ProperSave
                 var metadata = ProperSavePlugin.CurrentSave?.SaveFileMeta;
                 if (metadata != null && metadata.FilePath.HasValue)
                 {
-                    ProperSavePlugin.SavesFileSystem.DeleteFile(metadata.FilePath.Value);
+                    if (ProperSavePlugin.SavesFileSystem.FileExists(metadata.FilePath.Value))
+                    {
+                        ProperSavePlugin.SavesFileSystem.DeleteFile(metadata.FilePath.Value);
+                    }
                     SaveFileMetadata.Remove(metadata);
                 }
             }
