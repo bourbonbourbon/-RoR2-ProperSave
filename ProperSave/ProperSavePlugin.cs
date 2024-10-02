@@ -24,7 +24,7 @@ namespace ProperSave
     {
         public const string GUID = "com.KingEnderBrine.ProperSave";
         public const string Name = "Proper Save";
-        public const string Version = "2.11.1";
+        public const string Version = "2.11.2";
 
         private static readonly char[] invalidSubDirectoryCharacters = new[] { '\\', '/', '.' };
 
@@ -51,11 +51,10 @@ namespace ProperSave
 
             RoR2Application.onLoad += () =>
             {
-                SavesDirectory = string.IsNullOrEmpty(UserSavesDirectory.Value) || !Directory.Exists(UserSavesDirectory.Value) ? Application.persistentDataPath : UserSavesDirectory.Value;
                 if (UseCloudStorage.Value)
                 {
                     SavesFileSystem = RoR2Application.cloudStorage;
-                    if (!string.IsNullOrEmpty(CloudStorageSubDirectory.Value))
+                    if (!string.IsNullOrWhiteSpace(CloudStorageSubDirectory.Value))
                     {
                         if (CloudStorageSubDirectory.Value.IndexOfAny(invalidSubDirectoryCharacters) != -1)
                         {
@@ -69,6 +68,27 @@ namespace ProperSave
                 }
                 else
                 {
+                    if (!string.IsNullOrWhiteSpace(UserSavesDirectory.Value))
+                    {
+                        if (!Directory.Exists(UserSavesDirectory.Value))
+                        {
+                            Logger.LogError("SavesDirectory from the config doesn't exists, using Application.persistentDataPath");
+                            SavesDirectory = Application.persistentDataPath;
+                        }
+                        else
+                        {
+                            SavesDirectory = UserSavesDirectory.Value;
+                        }
+                    }
+                    else
+                    {
+                        SavesDirectory = Application.persistentDataPath;
+                    }
+                    if (string.IsNullOrWhiteSpace(SavesDirectory))
+                    {
+                        Logger.LogError("Application.persistentDataPath is empty. Use SavesDirectory config option to specify a folder.");
+                    }
+
                     var physicalFileSystem = new PhysicalFileSystem();
                     SavesFileSystem = new SubFileSystem(physicalFileSystem, physicalFileSystem.ConvertPathFromInternal(SavesDirectory));
                 }

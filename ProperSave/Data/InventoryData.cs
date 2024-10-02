@@ -1,7 +1,5 @@
 ﻿using RoR2;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.Serialization;
 
 namespace ProperSave.Data
@@ -10,6 +8,16 @@ namespace ProperSave.Data
     {
         [DataMember(Name = "ib")]
         public uint infusionBonus;
+        [DataMember(Name = "ed")]
+        public bool equipmentDisabled;
+        [DataMember(Name = "bah")]
+        public float beadAppliedHealth;
+        [DataMember(Name = "bas")]
+        public float beadAppliedShield;
+        [DataMember(Name = "bar")]
+        public float beadAppliedRegen;
+        [DataMember(Name = "bad")]
+        public float beadAppliedDamage;
         [DataMember(Name = "i")]
         public List<ItemData> items;
 
@@ -21,6 +29,11 @@ namespace ProperSave.Data
         public InventoryData(Inventory inventory)
         {
             infusionBonus = inventory.infusionBonus;
+            equipmentDisabled = inventory.equipmentDisabled;
+            beadAppliedDamage = inventory.beadAppliedDamage;
+            beadAppliedHealth = inventory.beadAppliedHealth;
+            beadAppliedRegen = inventory.beadAppliedRegen;
+            beadAppliedShield = inventory.beadAppliedShield;
 
             items = new List<ItemData>();
             foreach (var item in inventory.itemAcquisitionOrder)
@@ -38,6 +51,12 @@ namespace ProperSave.Data
 
         public void LoadInventory(Inventory inventory)
         {
+            inventory.beadAppliedShield = beadAppliedShield;
+            inventory.beadAppliedRegen = beadAppliedRegen;
+            inventory.beadAppliedHealth = beadAppliedHealth;
+            inventory.beadAppliedDamage = beadAppliedDamage;
+            inventory.equipmentDisabled = equipmentDisabled;
+
             inventory.itemAcquisitionOrder.Clear();
             foreach (var item in items)
             {
