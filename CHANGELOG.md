@@ -1,3 +1,7 @@
+**2.11.2**
+* Fixed an issue where Prayer beads' stats bonuses wouldn't save/load.
+* Fixed Ukrainian localization, thanks `Damglador`.
+
 **2.11.1**
 * Fixed an issue where Equipment cooldown would be run time + leftover cooldown time.
 
