@@ -1,3 +1,6 @@
+**2.12.0**
+* Fixes for 1.3.6 update.
+
 **2.11.2**
 * Fixed an issue where Prayer beads' stats bonuses wouldn't save/load.
 * Fixed Ukrainian localization, thanks `Damglador`.
