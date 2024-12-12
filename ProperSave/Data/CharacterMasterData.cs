@@ -49,8 +49,17 @@ namespace ProperSave.Data
         [DataMember(Name = "bxpnfcl")]
         public ulong beadXPNeededForCurrentLevel;
 
-        [DataMember(Name = "lssme")]
-        public uint lssMoneyExp;
+        [DataMember(Name = "tfu")]
+        public uint trackedFreeUnlocks;
+
+        [DataMember(Name = "tmc")]
+        public int trackedMissileCount;
+
+        [DataMember(Name = "cosc")]
+        public uint costOfSmallChest;
+
+        [DataMember(Name = "ebmmr")]
+        public uint extraBossMissileMoneyRemainder;
 
         [DataMember(Name = "ms")]
         public MinionData[] minions;
@@ -60,11 +69,14 @@ namespace ProperSave.Data
             money = master.money;
             voidCoins = master.voidCoins;
             beadExpirience = master.beadExperience;
-            numberOfBeadStatsGained = master.numberOfBeadStatsGained;
+            numberOfBeadStatsGained = master.numberOfBeadStatsGained_XPGainNerf;
             oldBeadLevel = master.oldBeadLevel;
             newBeadLevel = master.newBeadLevel;
             beadXPNeededForCurrentLevel = master.beadXPNeededForCurrentLevel;
-            lssMoneyExp = master.lssMoneyExp;
+            trackedFreeUnlocks = master.trackedFreeUnlocks;
+            trackedMissileCount = master.trackedMissileCount;
+            costOfSmallChest = master.costOfSmallChest;
+            extraBossMissileMoneyRemainder = master.ExtraBossMissileMoneyRemainder;
 
             inventory = new InventoryData(master.inventory);
             loadout = new LoadoutData(master.loadout);
@@ -126,14 +138,16 @@ namespace ProperSave.Data
             master.money = money;
             master.voidCoins = voidCoins;
             master.beadExperience = beadExpirience;
-            master.numberOfBeadStatsGained = numberOfBeadStatsGained;
+            master.numberOfBeadStatsGained_XPGainNerf = numberOfBeadStatsGained;
             master.oldBeadLevel = oldBeadLevel;
             master.newBeadLevel = newBeadLevel;
             master.beadXPNeededForCurrentLevel = beadXPNeededForCurrentLevel;
-            master.lssMoneyExp = lssMoneyExp;
+            master.trackedFreeUnlocks = trackedFreeUnlocks;
+            master.trackedMissileCount = trackedMissileCount;
+            master.costOfSmallChest = costOfSmallChest;
+            master.ExtraBossMissileMoneyRemainder = extraBossMissileMoneyRemainder;
 
             loadout.LoadData(master.loadout);
-
 
             cloverVoidRng?.LoadDataOut(out master.cloverVoidRng);
             if (delayedInventory)
