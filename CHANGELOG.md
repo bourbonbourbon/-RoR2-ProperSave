@@ -1,3 +1,14 @@
+**2.13.1**
+* Fixed an issue where `Artifact of Prestige` data wouldn't save.
+
+**2.13.0**
+* Fixes for `Alloyed Collective` update.
+* Eclipse win should now count towards the character you started the save with, not the one you had selected before save loading. 
+* Added `ps_force_load` command for debug purposes.
+
+**2.12.1**
+* Added Japanese translation, thanks `WakefulSpect`.
+
 **2.12.0**
 * Fixes for 1.3.6 update.
 
@@ -86,7 +97,7 @@
 
 **2.6.0**
 
-* Added tooltip with short save info when hower over `Load` button or hold load button on a gamepad.
+* Added tooltip with short save info when hover over `Load` button or hold load button on a gamepad.
 
 **2.5.3**
 
@@ -141,7 +152,7 @@
 
 **2.3.0**
 
-* Added `ShareSuite` support. (No longer reseting gold to 0 when loading run).
+* Added `ShareSuite` support. (No longer resetting gold to 0 when loading run).
 * Added `BiggerBazaar` support.
 
 **2.2.2**
@@ -150,7 +161,7 @@
 
 **2.2.1**
 
-* Updated langauge stuff
+* Updated language stuff
 
 **2.2.0**
 
