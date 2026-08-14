@@ -20,16 +20,18 @@ Each game mode (`Classic`, `Eclipse`, `Simulacrum`) has it's own save files, so 
 * `UseCloudStorage` - Store files in Steam/EpicGames cloud. Enabling this feature would not preserve current saves and disabling it wouldn't clear the cloud.
 * `CloudStorageSubDirectory` - Sub directory name for cloud storage. Changing it allows to use different save files for different mod profiles.
 * `SavesDirectory` - Directory where save files will be stored. "ProperSave" directory will be created in the directory you have specified. If the directory doesn't exist the default one will be used.
+* `Resilient` - Save file type. True - entries from catalogs will be saved by name instead of index, which should have less issue on mod list change, but has bigger save file size. False - the old way, entries from catalogs are saved by index, which works for non-changing mod list, save file size is much lower.
 
 # For mod developers
 #### Saving
 To save data you need to subscribe to `ProperSave.SaveFile.OnGatherSaveData`. It will be called every time the game is saved (this happens on `RoR2.Stage.onStageStartGlobal`) to gather info from mods that needs to be saved. You can add any value with any key, but remember that other mods can do the same thing, so keep keys unique (maybe add a mod name in front or something). 
-I would suggest adding only one object per mod because the type of the object is also stored to be able to deserialize objects, and it can take a lot of space in comparison with stored value. 
-An object that you add in the dictionary will be serialized to JSON. Here is some info about serialization:
+I would suggest adding only one object per mod.
+Here is some info about serialization:
 
-* Only public properties/fields will be serialized.
-* You can add `[DataMember()]` attribute from `System.Runtime.Serialization` to specify custom name for property/field in json file.
+* Only public properties/fields will be serialized. Properties must have both `get` and `set` available.
 * You can add `[IgnoreDataMember]` attribute from `System.Runtime.Serialization` to specify that this public property/field should be ignored on serialization.
+* Any collection type should be supported.
+* Cyclic references are allowed and will be properly handled.
 
 #### Loading
 Once save file is loaded you can get data you've previously saved and apply it anytime you want. Here are some things that will help you with that:
@@ -40,6 +42,7 @@ Once save file is loaded you can get data you've previously saved and apply it a
 * `ProperSave.Loading.OnLoadingEnded` - event, fired when `IsLoading` set to false (this happens after `RoR2.TeamManager.Start` because this is the last step of loading process).
 * `ProperSave.Loading.CurrentSave` - current save file, you can access it after `OnLoadingStarted`. Will be overwritten every time game is saved.
 * `CurrentSave.GetModdedData<Type>("")` - use this method to get data that you've saved.
+* `CurrentSave.TryGetModdedData<Type>("")` - use this method to get data that you've saved or null if there is nothing saved with that key.
 * `ProperSave.Data` - under this namespace you can find classes used to save some of vanilla data. 
 
 # Console commands

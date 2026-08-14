@@ -1,14 +1,12 @@
 ﻿using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using ProperSave.Utils;
 using RoR2;
 using RoR2.Networking;
 using System;
 using System.Collections;
-using PSTinyJson;
-using Zio;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace ProperSave
 {
@@ -18,20 +16,33 @@ namespace ProperSave
         public static bool IsLoading 
         {
             get => isLoading;
-            private set
+            internal set
             {
                 if (isLoading == value)
                 {
                     return;
                 }
                 isLoading = value;
-                if (isLoading)
+
+                var save = CurrentSave;
+                var invocationList = isLoading ? OnLoadingStarted?.GetInvocationList() : OnLoadingEnded?.GetInvocationList();
+                if (invocationList != null)
                 {
-                    OnLoadingStarted?.Invoke(CurrentSave);
-                }
-                else
-                {
-                    OnLoadingEnded?.Invoke(CurrentSave);
+                    foreach (var invocation in invocationList)
+                    {
+                        try
+                        {
+                            ((Action<SaveFile>)invocation)(save);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex is MissingMemberException)
+                            {
+                                ProperSavePlugin.InstanceLogger.LogError($"Method {invocation.Method?.DeclaringType.FullName}.{invocation.Method.Name}");
+                            }
+                            ProperSavePlugin.InstanceLogger.LogError(ex);
+                        }
+                    }
                 }
             }
         }
@@ -40,14 +51,14 @@ namespace ProperSave
         public static event Action<SaveFile> OnLoadingStarted;
         public static event Action<SaveFile> OnLoadingEnded;
 
-        public static SaveFile CurrentSave => ProperSavePlugin.CurrentSave;
+        public static SaveFile CurrentSave => ProperSavePlugin.CurrentSave?.Body;
 
         internal static void RegisterHooks()
         {
             //Replace with custom run load
             IL.RoR2.Run.Start += RunStart;
 
-            //Restore team expirience
+            //Restore team experience
             On.RoR2.TeamManager.Start += TeamManagerStart;
         }
 
@@ -62,7 +73,7 @@ namespace ProperSave
             orig(self);
             if (IsLoading)
             {
-                ProperSavePlugin.CurrentSave.LoadTeam();
+                CurrentSave.LoadTeam();
                 //This is last part of loading process
                 IsLoading = false;
             }
@@ -76,6 +87,7 @@ namespace ProperSave
                 FirstRunStage = true;
                 if (IsLoading)
                 {
+                    ProperSavePlugin.InstanceLogger.LogInfo($"Loading save file {ProperSavePlugin.CurrentSave.FileName}");
                     CurrentSave.LoadRun();
                     CurrentSave.LoadArtifacts();
                     CurrentSave.LoadPlayers();
@@ -123,12 +135,25 @@ namespace ProperSave
                 yield break;
             }
 
-            var saveJSON = ProperSavePlugin.SavesFileSystem.ReadAllText(filePath.Value);
-            ProperSavePlugin.CurrentSave = JSONParser.FromJson<SaveFile>(saveJSON);
-            ProperSavePlugin.CurrentSave.SaveFileMeta = metadata;
+            try
+            {
+                metadata.ReadBody();
+            }
+            catch (Exception ex)
+            {
+                ProperSavePlugin.InstanceLogger.LogWarning("Failed to read save file body");
+                ProperSavePlugin.InstanceLogger.LogError(ex);
+                yield break;
+            }
+            finally
+            {
+                ObjectBuffer.Clear();
+            }
+
+            ProperSavePlugin.CurrentSave = metadata;
             IsLoading = true;
 
-            if (ProperSavePlugin.CurrentSave.ContentHash != null && ProperSavePlugin.CurrentSave.ContentHash != ProperSavePlugin.ContentHash)
+            if (metadata.Header.ContentHash != ProperSavePlugin.ContentHash)
             {
                 ProperSavePlugin.InstanceLogger.LogWarning("Loading run but content mismatch detected which may result in errors");
             }
@@ -140,16 +165,18 @@ namespace ProperSave
         internal static void LoadForce(ConCommandArgs args)
         {
             var path = args.TryGetArgString(0);
-            if (string.IsNullOrWhiteSpace(path))
+            if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
             {
                 Debug.LogError("Incorrect path");
                 return;
             }
 
+            var metadata = new SaveFileMetadata();
+
             try
             {
-                var saveJSON = File.ReadAllText(path);
-                ProperSavePlugin.CurrentSave = JSONParser.FromJson<SaveFile>(saveJSON);
+                metadata.ReadForce(path);
+                ProperSavePlugin.CurrentSave = metadata;
                 IsLoading = true;
             }
             catch (Exception e)
@@ -159,7 +186,7 @@ namespace ProperSave
                 ResetLoading();
             }
 
-            if (ProperSavePlugin.CurrentSave.ContentHash != null && ProperSavePlugin.CurrentSave.ContentHash != ProperSavePlugin.ContentHash)
+            if (metadata.Header.ContentHash != ProperSavePlugin.ContentHash)
             {
                 ProperSavePlugin.InstanceLogger.LogWarning("Loading run but content mismatch detected which may result in errors");
             }
@@ -178,7 +205,6 @@ namespace ProperSave
             {
                 ProperSavePlugin.Instance.StartCoroutine(LoadForceCoroutine());
             }
-
 
             static void ResetLoading()
             {

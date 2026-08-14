@@ -1,3 +1,35 @@
+**3.0.7**
+* Fixed an error when saving some modded data.
+
+**3.0.6**
+* Added more error handling during loading.
+* Temporarily reverted a breaking change, which should fix mod compatibility.
+
+**3.0.5**
+* Slightly reduced save file size by using packed ints.
+* Changed `ModdedData` serialization from json to binary format, this should reduce save file size and allow supporing more types for serialization.
+
+**3.0.4**
+* Fixed an issue where some issue with unlockables would prevent saving.
+
+**3.0.3**
+* Fixed an issue where loading a save after completing artifact trial for `Artifact of Metamorphosis` you would spawn as the character you started the game with, instead of the character you got during trial.
+* Fixed an issue where an error during saving would leave a broken save file that you can't load.
+
+**3.0.2**
+* Fixed an issue where loading would break halfway when some mods are present.
+
+**3.0.1**
+* Fixed an issue where old save file wouldn't be overwritten after starting a new run without loading.
+
+**3.0.0**
+* Changed save file format from json to binary, existing saves should automatically migrate to the new format.
+* Added config option to change save type.
+* Fixed an issue where transitioning a scene while having broken operator drones would result in non-reparable drones after loading.
+
+**2.13.3**
+* Fixed an issue where loading a run in `Conduit Canyon` as the first run after launching the game will cause teleporter to become non-interactable.
+
 **2.13.2**
 * Fixed an issue where going to next stage after someone disconnected would cause a black screen and constant error spam.
 
@@ -77,7 +109,7 @@
 
 * Fixed an issue where `Benthic Bloom` would be activated twice when you load the game.
 * Storing `Benthic Bloom` rng, so that the same items would be converted when you load a save.
-* Fixed a type in `ProperSave.SaveFile.OnGatherSaveData` event name.
+* Fixed a typo in `ProperSave.SaveFile.OnGatherSaveData` event name.
 * Added more checks so the old broken saves wouldn't cause issues in lobby.
 
 **2.8.1**

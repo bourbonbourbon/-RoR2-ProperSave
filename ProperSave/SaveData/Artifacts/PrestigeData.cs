@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using ProperSave.Utils;
 using RoR2;
 using RoR2.Artifacts;
 
@@ -9,17 +6,17 @@ namespace ProperSave.SaveData.Artifacts
 {
     public class PrestigeData
     {
-        [DataMember(Name = "msc")]
         public int mountainShrineCount;
 
-        internal PrestigeData()
+        internal static PrestigeData Create()
         {
-            if (!Run.instance.TryGetComponent<PrestigeBulwarkManager>(out var manager))
+            var data = new PrestigeData();
+            if (Run.instance.TryGetComponent<PrestigeBulwarkManager>(out var manager))
             {
-                return;
+                data.mountainShrineCount = manager.mountainShrineCount;
             }
 
-            mountainShrineCount = manager.mountainShrineCount;
+            return data;
         }
 
         internal void LoadData()
@@ -30,6 +27,21 @@ namespace ProperSave.SaveData.Artifacts
             }
 
             manager.mountainShrineCount = mountainShrineCount;
+        }
+
+        internal static PrestigeData Read(ReaderContext context)
+        {
+            var data = new PrestigeData();
+            var reader = context.Reader;
+            var version = context.Version;
+            data.mountainShrineCount = version > 1 ? reader.ReadPackedInt32() : reader.ReadInt32();
+
+            return data;
+        }
+
+        internal void Write(WriterContext context)
+        {
+            context.Writer.WritePacked(mountainShrineCount);
         }
     }
 }

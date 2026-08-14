@@ -1,25 +1,41 @@
 ﻿using ProperSave.SaveData.Artifacts;
-using System.Runtime.Serialization;
+using ProperSave.Utils;
 
 namespace ProperSave.SaveData
 {
     public class ArtifactsData
     {
-        [DataMember(Name = "ed")]
         public EnigmaData enigmaData;
-        [DataMember(Name = "pd")]
         public PrestigeData prestigeData;
 
-        internal ArtifactsData()
+        internal static ArtifactsData Create()
         {
-            enigmaData = new EnigmaData();
-            prestigeData = new PrestigeData();
+            return new ArtifactsData
+            {
+                enigmaData = EnigmaData.Create(),
+                prestigeData = PrestigeData.Create(),
+            };
         }
 
         internal void LoadData()
         {
             enigmaData.LoadData();
             prestigeData.LoadData();
+        }
+
+        internal static ArtifactsData Read(ReaderContext context)
+        {
+            var data = new ArtifactsData();
+            data.enigmaData = EnigmaData.Read(context);
+            data.prestigeData = PrestigeData.Read(context);
+
+            return data;
+        }
+        
+        internal void Write(WriterContext context)
+        {
+            enigmaData.Write(context);
+            prestigeData.Write(context);
         }
     }
 }
