@@ -56,16 +56,36 @@ namespace ProperSave
         internal static void RegisterHooks()
         {
             //Replace with custom run load
+            On.RoR2.NetworkSession.BeginRun += NetworkSessionBeginRun;
             IL.RoR2.Run.Start += RunStart;
+            IL.RoR2.DLC4ProgressionController.Start += DLC4ProgressionControllerStart;
+            On.RoR2.KarmaManager.Start += KarmaManagerStart;
 
             //Restore team experience
             On.RoR2.TeamManager.Start += TeamManagerStart;
         }
 
-        internal static void UnregisterHooks()
+        private static Run NetworkSessionBeginRun(On.RoR2.NetworkSession.orig_BeginRun orig, NetworkSession self, Run runPrefabComponent, RuleBook ruleBook, ulong seed)
         {
-            IL.RoR2.Run.Start -= RunStart;
-            On.RoR2.TeamManager.Start -= TeamManagerStart;
+            if (IsLoading)
+            {
+                var runData = CurrentSave.RunData;
+                ruleBook = runData.ruleBook.Load();
+                seed = runData.seed;
+            }
+
+            return orig(self, runPrefabComponent, ruleBook, seed);
+        }
+
+        private static void KarmaManagerStart(On.RoR2.KarmaManager.orig_Start orig, KarmaManager self)
+        {
+            orig(self);
+            if (IsLoading)
+            {
+                CurrentSave.LoadKarmaManager();
+                //This is last part of loading process
+                IsLoading = false;
+            }
         }
 
         private static void TeamManagerStart(On.RoR2.TeamManager.orig_Start orig, TeamManager self)
@@ -74,8 +94,6 @@ namespace ProperSave
             if (IsLoading)
             {
                 CurrentSave.LoadTeam();
-                //This is last part of loading process
-                IsLoading = false;
             }
         }
 
@@ -101,6 +119,23 @@ namespace ProperSave
             });
             c.Emit(OpCodes.Brfalse, c.Next);
             c.Emit(OpCodes.Ret);
+        }
+
+        private static void DLC4ProgressionControllerStart(ILContext il)
+        {
+            var c = new ILCursor(il);
+            c.GotoNext(
+                x => x.MatchLdarg(0),
+                x => x.MatchCallOrCallvirt<Run>("get_instance"),
+                x => x.MatchLdfld<Run>(nameof(Run.runRNG)));
+            c.Index++;
+
+            c.EmitDelegate<Func<DLC4ProgressionController, bool>>(controller =>
+            {
+                return controller.rng != null;
+            });
+            c.Emit(OpCodes.Brtrue, c.Clone().GotoNext(MoveType.After, x => x.MatchCallOrCallvirt<DLC4ProgressionController>("set_rng")).Next);
+            c.Emit(OpCodes.Ldarg_0);
         }
 
         internal static IEnumerator LoadLobby()

@@ -1,3 +1,13 @@
+**3.1.2**
+* Fixed an issue that caused minions to be dead after loading.
+
+**3.1.1**
+* Fixed an error preventing saving when dlc4 expansion is disabled.
+
+**3.1.0**
+* Fixes for `Hallowed Concepts` update.
+* Removed support for saves prior to `3.0.0` version.
+
 **3.0.7**
 * Fixed an error when saving some modded data.
 
@@ -7,7 +17,7 @@
 
 **3.0.5**
 * Slightly reduced save file size by using packed ints.
-* Changed `ModdedData` serialization from json to binary format, this should reduce save file size and allow supporing more types for serialization.
+* Changed `ModdedData` serialization from json to binary format, this should reduce save file size and allow supporting more types for serialization.
 
 **3.0.4**
 * Fixed an issue where some issue with unlockables would prevent saving.
