@@ -1,3 +1,9 @@
+**3.1.4**
+* Added more error handling when loading a minion.
+
+**3.1.3**
+* Fixed not working gamepad button to load save file.
+
 **3.1.2**
 * Fixed an issue that caused minions to be dead after loading.
 
@@ -74,7 +80,6 @@
 
 **2.9.1**
 * Updated French translation, thanks `NorthBlue333`.
-* Mod does not delete save files when dead.
 
 **2.9.0**
 * Added config option to enable Steam/Epic games cloud storage support, allowing you to synchronize saves between devices.
